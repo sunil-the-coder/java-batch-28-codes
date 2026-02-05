@@ -570,6 +570,44 @@ public class FlightController {
 
 -----------
 
+package com.devgen.redflights;
+
+import com.devgen.redflights.flight.dto.FlightRequest;
+import com.devgen.redflights.flight.service.FlightService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class RedflightsApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(RedflightsApplication.class, args);
+	}
+
+	@Bean
+	CommandLineRunner seedFlights(FlightService flightService) {
+		return args -> List.of(
+			new FlightRequest("RF100", "SpiceJet", "DEL", "BOM", LocalDate.now().plusDays(1), LocalTime.of(6, 15), LocalTime.of(8, 30), BigDecimal.valueOf(5499), 40),
+			new FlightRequest("RF200", "Goibibo", "BOM", "BLR", LocalDate.now().plusDays(2), LocalTime.of(9, 0), LocalTime.of(10, 45), BigDecimal.valueOf(4999), 35),
+			new FlightRequest("RF300", "Air India", "BLR", "DEL", LocalDate.now().plusDays(3), LocalTime.of(18, 20), LocalTime.of(20, 50), BigDecimal.valueOf(5799), 30)
+		).forEach(request -> {
+			try {
+				flightService.addFlight(request);
+			} catch (IllegalArgumentException ignored) {
+				// Flight already exists, nothing to do.
+			}
+		});
+	}
+}
+
+-------------------
+
 
 package com.devgen.redflights.common;
 
@@ -630,4 +668,6 @@ spring.jpa.properties.hibernate.format_sql=true
 
 
 -----------------
+
+
 
