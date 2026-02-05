@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.devgen</groupId>
+	<artifactId>redflights</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>redflights</name>
+	<description>Flight Booking System</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>25</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+
+
+--------------
+
+
+package com.devgen.redflights.flight.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = "flights")
+public class Flight {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "flight_number", nullable = false, unique = true, length = 20)
+    private String flightNumber;
+
+    @Column(nullable = false, length = 60)
+    private String airline;
+
+    @Column(nullable = false, length = 60)
+    private String origin;
+
+    @Column(nullable = false, length = 60)
+    private String destination;
+
+    @Column(name = "departure_date", nullable = false)
+    private LocalDate departureDate;
+
+    @Column(name = "departure_time", nullable = false)
+    private LocalTime departureTime;
+
+    @Column(name = "arrival_time", nullable = false)
+    private LocalTime arrivalTime;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @Column(name = "available_seats", nullable = false)
+    private Integer availableSeats;
+
+    protected Flight() {
+        // JPA only
+    }
+
+    public Flight(
+        String flightNumber,
+        String airline,
+        String origin,
+        String destination,
+        LocalDate departureDate,
+        LocalTime departureTime,
+        LocalTime arrivalTime,
+        BigDecimal price,
+        Integer availableSeats
+    ) {
+        this.flightNumber = flightNumber;
+        this.airline = airline;
+        this.origin = origin;
+        this.destination = destination;
+        this.departureDate = departureDate;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.price = price;
+        this.availableSeats = availableSeats;
+    }
+
+    public static Flight create(
+        String flightNumber,
+        String airline,
+        String origin,
+        String destination,
+        LocalDate departureDate,
+        LocalTime departureTime,
+        LocalTime arrivalTime,
+        BigDecimal price,
+        Integer availableSeats
+    ) {
+        return new Flight(
+
+            flightNumber,
+            airline,
+            origin,
+            destination,
+            departureDate,
+            departureTime,
+            arrivalTime,
+            price,
+            availableSeats
+        );
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
+    }
+
+    public String getAirline() {
+        return airline;
+    }
+
+    public void setAirline(String airline) {
+        this.airline = airline;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public LocalDate getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(LocalDate departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public LocalTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(LocalTime departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public LocalTime getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(LocalTime arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(Integer availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+}
+
+
+----------------
+
+package com.devgen.redflights.flight.repository;
+
+import com.devgen.redflights.flight.domain.Flight;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface FlightRepository extends JpaRepository<Flight, Long> {
+
+    boolean existsByFlightNumberIgnoreCase(String flightNumber);
+
+    List<Flight> findByOriginIgnoreCaseAndDestinationIgnoreCaseAndDepartureDate(
+        String origin,
+        String destination,
+        LocalDate departureDate
+    );
+}
+
+
+------------
+
+
+package com.devgen.redflights.flight.service;
+
+import com.devgen.redflights.flight.domain.Flight;
+import com.devgen.redflights.flight.dto.FlightRequest;
+import java.time.LocalDate;
+import java.util.List;
+
+public interface FlightService {
+
+    Flight addFlight(FlightRequest request);
+
+    List<Flight> searchFlights(String origin, String destination, LocalDate departureDate);
+
+    List<Flight> getAllFlights();
+}
+
+---------------
+package com.devgen.redflights.flight.service;
+
+import com.devgen.redflights.flight.domain.Flight;
+import com.devgen.redflights.flight.dto.FlightMapper;
+import com.devgen.redflights.flight.dto.FlightRequest;
+import com.devgen.redflights.flight.repository.FlightRepository;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class FlightServiceImpl implements FlightService {
+
+    private final FlightRepository flightRepository;
+
+    public FlightServiceImpl(FlightRepository flightRepository) {
+        this.flightRepository = flightRepository;
+    }
+
+    @Override
+    public Flight addFlight(FlightRequest request) {
+        String normalizedFlightNumber = request.flightNumber().trim();
+        if (flightRepository.existsByFlightNumberIgnoreCase(normalizedFlightNumber)) {
+            throw new IllegalArgumentException("Flight number already exists");
+        }
+
+        Flight flight = FlightMapper.toEntity(request);
+        flight.setFlightNumber(normalizedFlightNumber);
+        flight.setOrigin(normalizeLocation(flight.getOrigin()));
+        flight.setDestination(normalizeLocation(flight.getDestination()));
+        return flightRepository.save(flight);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Flight> searchFlights(String origin, String destination, LocalDate departureDate) {
+        if (origin == null || destination == null || departureDate == null) {
+            throw new IllegalArgumentException("Origin, destination, and departure date are required");
+        }
+        String normalizedOrigin = normalizeLocation(origin);
+        String normalizedDestination = normalizeLocation(destination);
+        return flightRepository.findByOriginIgnoreCaseAndDestinationIgnoreCaseAndDepartureDate(
+            normalizedOrigin,
+            normalizedDestination,
+            departureDate
+        );
+    }
+
+    @Override
+    public List<Flight> getAllFlights() {
+        return flightRepository.findAll();
+    }
+
+    //" p une " --> pune
+    private String normalizeLocation(String location) {
+        return location.trim();
+    }
+}
+
+
+------------------
+
+
+package com.devgen.redflights.flight.dto;
+
+import com.devgen.redflights.flight.domain.Flight;
+import java.util.List;
+
+public final class FlightMapper {
+
+    private FlightMapper() {
+    }
+
+    public static Flight toEntity(FlightRequest request) {
+        return Flight.create(
+            request.flightNumber(),
+            request.airline(),
+            request.origin(),
+            request.destination(),
+            request.departureDate(),
+            request.departureTime(),
+            request.arrivalTime(),
+            request.price(),
+            request.availableSeats()
+        );
+    }
+
+    public static FlightResponse toResponse(Flight flight) {
+        return new FlightResponse(
+            flight.getId(),
+            flight.getFlightNumber(),
+            flight.getAirline(),
+            flight.getOrigin(),
+            flight.getDestination(),
+            flight.getDepartureDate(),
+            flight.getDepartureTime(),
+            flight.getArrivalTime(),
+            flight.getPrice(),
+            flight.getAvailableSeats()
+        );
+    }
+
+    public static List<FlightResponse> toResponseList(List<Flight> flights) {
+        return flights.stream().map(FlightMapper::toResponse).toList();
+    }
+}
+
+-------------
+
+
+package com.devgen.redflights.flight.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+/*
+   DTO for creating a new flight. Data transfer object used in flight creation requests.
+
+   Isolate the database entity from the API layer.
+
+ */
+public record FlightRequest(
+    @NotBlank(message = "Flight number is required")
+    String flightNumber,
+
+    @NotBlank(message = "Airline name is required")
+    String airline,
+
+    @NotBlank(message = "Origin is required")
+    String origin,
+
+    @NotBlank(message = "Destination is required")
+    String destination,
+
+    @NotNull(message = "Departure date is required")
+    @FutureOrPresent(message = "Departure date cannot be in the past")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate departureDate,
+
+    @NotNull(message = "Departure time is required")
+    @JsonFormat(pattern = "HH:mm")
+    LocalTime departureTime,
+
+    @NotNull(message = "Arrival time is required")
+    @JsonFormat(pattern = "HH:mm")
+    LocalTime arrivalTime,
+
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be positive")
+    BigDecimal price,
+
+    @NotNull(message = "Available seats is required")
+    @Min(value = 1, message = "At least one seat should be available")
+    Integer availableSeats
+) { }
+
+
+-------------------
+
+
+package com.devgen.redflights.flight.dto;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+public record FlightResponse(
+    Long id,
+    String flightNumber,
+    String airline,
+    String origin,
+    String destination,
+    LocalDate departureDate,
+    LocalTime departureTime,
+    LocalTime arrivalTime,
+    BigDecimal price,
+    Integer availableSeats
+) { }
+
+
+-----------
+
+
+package com.devgen.redflights.flight.web;
+
+import com.devgen.redflights.flight.dto.FlightMapper;
+import com.devgen.redflights.flight.dto.FlightRequest;
+import com.devgen.redflights.flight.dto.FlightResponse;
+import com.devgen.redflights.flight.service.FlightService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/flights")
+@Validated
+public class FlightController {
+
+    private final FlightService flightService;
+
+    public FlightController(FlightService flightService) {
+        this.flightService = flightService;
+    }
+
+    @PostMapping
+    public ResponseEntity<FlightResponse> addFlight(@Valid @RequestBody FlightRequest request) {
+        var flight = flightService.addFlight(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(FlightMapper.toResponse(flight));
+    }
+
+    @GetMapping("/search")
+    public List<FlightResponse> searchFlights(
+        @RequestParam("from") @NotBlank(message = "Origin is required") String origin,
+        @RequestParam("to") @NotBlank(message = "Destination is required") String destination,
+        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate
+    ) {
+        var flights = flightService.searchFlights(origin, destination, departureDate);
+        return FlightMapper.toResponseList(flights);
+    }
+
+    @GetMapping("")
+    public List<FlightResponse> searchFlights(
+    ) {
+        var flights = flightService.getAllFlights();
+        return FlightMapper.toResponseList(flights);
+    }
+}
+
+
+-----------
+
+
+package com.devgen.redflights.common;
+
+import jakarta.validation.ConstraintViolationException;
+import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
+        var message = ex.getBindingResult().getFieldErrors().stream()
+            .map(GlobalExceptionHandler::formatFieldError)
+            .collect(Collectors.joining(", "));
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setDetail(message);
+        return problem;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setDetail(ex.getMessage());
+        return problem;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(IllegalArgumentException ex) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setDetail(ex.getMessage());
+        return problem;
+    }
+
+    private static String formatFieldError(FieldError error) {
+        return error.getField() + ": " + error.getDefaultMessage();
+    }
+}
+
+-------------------------
+
+
+spring.application.name=redflights
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://localhost:5432/batch28-db
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+
+spring.jpa.properties.hibernate.format_sql=true
+
+
+-----------------
+
