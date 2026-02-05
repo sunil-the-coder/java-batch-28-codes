@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.devgen</groupId>
+	<artifactId>spring-boot-jpa</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>spring-boot-jpa</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>25</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.8</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+-------
+
+
+spring.application.name=spring-boot-jpa
+
+server.port=8081
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://localhost:5432/batch28-db
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+------------
+
+
+package com.devgen.spring_boot_jpa.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="laptops")
+public class Laptop {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name="id", nullable = false, unique = true)
+  private int id;
+
+  @Column(name="lbrand", nullable = false)
+  private String brand;
+
+  @Column(name="lmodel", nullable = false)
+  private String model;
+
+  @Column(name="lprice", nullable = false)
+  private double price;
+
+  public Laptop() {
+  }
+
+  public Laptop(String brand, String model, double price) {
+    this.brand = brand;
+    this.model = model;
+    this.price = price;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getBrand() {
+    return brand;
+  }
+
+  public void setBrand(String brand) {
+    this.brand = brand;
+  }
+
+  public String getModel() {
+    return model;
+  }
+
+  public void setModel(String model) {
+    this.model = model;
+  }
+
+  public double getPrice() {
+    return price;
+  }
+
+  public void setPrice(double price) {
+    this.price = price;
+  }
+
+  @Override
+  public String toString() {
+    return "Laptop{" +
+        "id=" + id +
+        ", brand='" + brand + '\'' +
+        ", model='" + model + '\'' +
+        ", price=" + price +
+        '}';
+  }
+}
+
+
+------------
+
+
+package com.devgen.spring_boot_jpa.repository;
+
+import com.devgen.spring_boot_jpa.entity.Laptop;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface LaptopRepository extends JpaRepository<Laptop, Integer> {
+}
+
+
+---------------
+
+
+
+package com.devgen.spring_boot_jpa.service;
+
+import com.devgen.spring_boot_jpa.entity.Laptop;
+import com.devgen.spring_boot_jpa.repository.LaptopRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class LaptopService {
+    private final LaptopRepository laptopRepository;
+
+    public LaptopService(LaptopRepository laptopRepository) {
+        this.laptopRepository = laptopRepository;
+    }
+
+    public Laptop addLaptop(Laptop laptop) {
+        return laptopRepository.save(laptop);
+    }
+
+    public void deleteLaptop(Integer id) {
+        laptopRepository.deleteById(id);
+    }
+
+    public List<Laptop> getAllLaptops() {
+        return laptopRepository.findAll();
+    }
+
+    public Optional<Laptop> getLaptopById(Integer id) {
+        return laptopRepository.findById(id);
+    }
+}
+
+
+----------
+
+
+package com.devgen.spring_boot_jpa;
+
+import com.devgen.spring_boot_jpa.entity.Laptop;
+import com.devgen.spring_boot_jpa.repository.LaptopRepository;
+import java.util.List;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class SpringBootJpaApplication {
+
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(SpringBootJpaApplication.class, args);
+
+		LaptopRepository repository = context.getBean(LaptopRepository.class);
+
+		repository.save(new Laptop("Dell", "XPS 13", 999.99));
+		repository.save(new Laptop("Apple", "MacBook Pro", 1299.99));
+		repository.save(new Laptop("HP", "Spectre x360", 1099.99));
+
+//		Laptop laptop = repository.findById(2).get();
+//		IO.println(laptop);
+//
+//		IO.println("All Laptops:");
+//		List<Laptop> laptops = repository.findAll();
+//		for (Laptop l : laptops) {
+//			IO.println(l);
+//		}
+	}
+
+}
+
+
+-------------
+
+
+
